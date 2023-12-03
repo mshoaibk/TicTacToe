@@ -70,7 +70,7 @@ builder.Services.AddSignalR(options =>
 
 
 //db
-builder.Services.AddDbContext<tictakContexts>(options => options.UseSqlServer("Server=.; Database=EmailBoxDb2; Trusted_Connection=True; MultipleActiveResultSets=True;TrustServerCertificate=True"));
+builder.Services.AddDbContext<tictakContexts>(options => options.UseSqlServer("Server=.; Database=DBTicTacToe; Trusted_Connection=True; MultipleActiveResultSets=True;TrustServerCertificate=True"));
 builder.Services.AddControllers();
 
 // configuring Swagger

@@ -40,7 +40,7 @@
     }
   },
   "profiles": {
-    "EmailBox": {
+    "TicTacToe": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

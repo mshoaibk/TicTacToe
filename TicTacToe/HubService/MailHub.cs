@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using TicTacToe.DB;
 using TicTacToe.DB.Contexts;
 
@@ -81,7 +83,61 @@ namespace TicTacToe.HubService
         }
         #endregion
         #region Game Moves 
+        public async Task CreateGameBoard(long FromUserId,string FromUserName,long ToUserId )
+        {
+           //create board Req
+           TblGameBoard obj = new TblGameBoard {
+           FromUserId = FromUserId,
+           ToUserId = ToUserId ,
+           Status = "pennding",
+           CreatedDate = DateTime.Now,
+           };
+            dbtictakContexts.TblGameBoard.Add(obj);
+            dbtictakContexts.SaveChanges();
 
+            //send notification to opponent
+            var ConIds = GetAllConnectionOfThatUserID(ToUserId.ToString()).Result;
+            if (ConIds?.Count > 0)
+            {
+                foreach (var Con in ConIds)
+                {
+                    await Clients.Client(Con).SendAsync("ReceiveGameReq", obj.Id/*GameId*/,FromUserId);
+                    await Clients.Client(Con).SendAsync("GameReq_Notification", FromUserName + "Wants to Play");
+                }
+            }
+
+            //notifay me
+            await Clients.Caller.SendAsync("GameReq_Sent_notification", "Reqiuest has been sent");
+        }
+
+        public async Task AcceptOrReject (long GameId,bool Status)
+        {
+           if( dbtictakContexts.TblGameBoard.Where(x => x.Id == GameId).Any())
+            {
+             var game =   dbtictakContexts.TblGameBoard.Where(x => x.Id == GameId).FirstOrDefault();
+                game.IsAccepted = Status;
+                game.Status = Status ? "Accepted" : "Rejected";
+                dbtictakContexts.TblGameBoard.Update(game);
+                dbtictakContexts.SaveChanges();
+                // aponant
+                var aponanName = dbtictakContexts.Tbl_User.Where(x=>x.Id == game.ToUserId).AsNoTracking().FirstOrDefault().UserName;
+
+                //notification 
+                var ConIds = GetAllConnectionOfThatUserID(game.FromUserId.ToString()).Result;
+                if (ConIds?.Count > 0)
+                {
+                    foreach (var Con in ConIds)
+                    {
+                        await Clients.Client(Con).SendAsync("GameReqStatusNotification", game.Status, aponanName,game.ToUserId);
+
+                    }
+
+
+                }
+
+            }
+
+        }
         #endregion
         #endregion
 

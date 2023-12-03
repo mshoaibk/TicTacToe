@@ -116,6 +116,52 @@ namespace TicTacToe.Controllers
             }
         }
 
+        [HttpPost]
+        [Route("GetAllPlayers")]
+        public async Task<IActionResult> GetAllPlayers()
+        {
+            try
+            {
+                
+                  var Players =   dbtictakContexts.Tbl_User.Select(x => 
+                     new Players
+                     {
+
+                        id = x.Id,
+                        phoneNumber = x.PhoneNumber,
+                        location = x.Location,
+                        userName = x.UserName,
+                       
+                    }).ToList();
+                   
+                    return Ok(new { Status = true, message = "Succesfull", players= Players });
+              
+
+
+
+            }
+            catch
+            {
+
+                return BadRequest(new { Status = false, message = "Error" });
+            }
+        }
+
         
+    }
+
+   
+
+
+    public class Players
+    {
+
+        public long id { get; set; }
+        public string? userName { get; set; }
+        public string? phoneNumber { get; set; }
+        public string? location { get; set; }
+       
+
+
     }
 }
