@@ -95,7 +95,7 @@ namespace TicTacToe.HubService
                 {
                     foreach (var Con in ConIds)
                     {
-                        await Clients.Client(Con).SendAsync("GameReqStatusNotification",game.id ,game.Status, aponanName,game.ToUserId);
+                        await Clients.Client(Con).SendAsync("GameReqStatusNotification",game.Id ,game.Status, aponanName,game.ToUserId);
 
                     }
 
