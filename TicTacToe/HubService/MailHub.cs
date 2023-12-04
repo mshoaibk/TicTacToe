@@ -68,8 +68,8 @@ namespace TicTacToe.HubService
             {
                 foreach (var Con in ConIds)
                 {
-                    await Clients.Client(Con).SendAsync("ReceiveGameReq", obj.Id/*GameId*/,FromUserId);
-                    await Clients.Client(Con).SendAsync("GameReq_Notification", FromUserName + "Wants to Play");
+                    await Clients.Client(Con).SendAsync("ReceiveGameReq", FromUserName + "Wants to Play", obj.Id/*GameId*/,FromUserId);
+                    
                 }
             }
 
@@ -143,13 +143,13 @@ namespace TicTacToe.HubService
                         {
                             foreach (var Con in ConIds)
                             {
-                                await Clients.Client(Con).SendAsync("ReceivePrivateMessage", PrivatechatId, messageResult.messageID, messageResult.message, messageResult.chatId, messageResult.senderID, messageResult.date);
+                                await Clients.Client(Con).SendAsync("ReceivePrivateMessage", messageResult.messageID, messageResult.message, messageResult.chatId, messageResult.senderID, messageResult.date);
                                 await Clients.Client(Con).SendAsync("NotifayMe", "you have New Message :" + message);
                             }
                         }
                     }
 
-                    await Clients.Caller.SendAsync("SendMeasseNotifayMe", "Message has been Sent", PrivatechatId, messageResult.messageID, messageResult.message, messageResult.chatId, messageResult.senderID, messageResult.date);
+                    await Clients.Caller.SendAsync("SendMeasseNotifayMe", "Message has been Sent",  messageResult.messageID, messageResult.message, messageResult.chatId, messageResult.senderID, messageResult.date);
 
                 }
         
@@ -355,9 +355,7 @@ namespace TicTacToe.HubService
         public long chatId { get; set; }
         public long? senderID { get; set; }
         public DateTime? date { get; set; }
-        public string? fIlePath { get; set; }
-        public string? fileType { get; set; }
-        public bool? isFile { get; set; }
+     
     }
     #endregion
 

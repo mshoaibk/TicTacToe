@@ -34,8 +34,9 @@ namespace TicTacToe.Controllers
         {
             try
             {
-                var _result =  dbtictakContexts.Tbl_User.Where(x=>x.Email == model.email && x.Password == model.password).FirstOrDefault();
-                if (_result.Email != null)
+               
+                var _result =  dbtictakContexts.Tbl_User.Where(x=>(x.Email == model.email || x.UserName == model.email) && x.Password == model.password).FirstOrDefault();
+                if (_result != null)
                 {
                     //create claims
                     var Claims = new[]
