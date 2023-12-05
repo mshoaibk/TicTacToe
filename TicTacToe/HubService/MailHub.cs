@@ -129,12 +129,12 @@ namespace TicTacToe.HubService
           
 
             // Get chat id (if already Exsit otherwise Create New One)
-            var PrivatechatId = GetChatId(senderID, recipientUserId, message).Result;
+            //var PrivatechatId = GetChatId(senderID, recipientUserId, message).Result;
             // Ensure that the sender and recipient are in the same private chat
            
-                var messageResult = AddMessage(senderID, recipientUserId, message, PrivatechatId).Result;
-                if (messageResult != null)
-                {
+               // var messageResult = AddMessage(senderID, recipientUserId, message, PrivatechatId).Result;
+                //if (messageResult != null)
+               // {
                     if (GetAllConnectionOfThatUserID(recipientUserId.ToString()) != null) //mean if this person is online
                     {
                         // get All Connection Ids Of senders
@@ -143,15 +143,15 @@ namespace TicTacToe.HubService
                         {
                             foreach (var Con in ConIds)
                             {
-                                await Clients.Client(Con).SendAsync("ReceivePrivateMessage", messageResult.messageID, messageResult.message, messageResult.chatId, messageResult.senderID, messageResult.date);
+                                await Clients.Client(Con).SendAsync("ReceivePrivateMessage",  message);
                                 await Clients.Client(Con).SendAsync("NotifayMe", "you have New Message :" + message);
                             }
                         }
                     }
 
-                    await Clients.Caller.SendAsync("SendMeasseNotifayMe", "Message has been Sent",  messageResult.messageID, messageResult.message, messageResult.chatId, messageResult.senderID, messageResult.date);
+                    await Clients.Caller.SendAsync("SendMeasseNotifayMe", message);
 
-                }
+               // }
         
         }
         #endregion
@@ -204,7 +204,7 @@ namespace TicTacToe.HubService
         {
             if (UserId != null)
             {
-                return await dbtictakContexts.TblSignalRConnection.Where(x => x.UserID == UserId).Select(x => x.SignalRConnectionID).AsNoTracking().ToListAsync();
+                return  dbtictakContexts.TblSignalRConnection.Where(x => x.UserID == UserId).Select(x => x.SignalRConnectionID).ToList();
             }
             else { return null; }
         }
