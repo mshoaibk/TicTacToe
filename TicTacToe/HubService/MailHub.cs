@@ -50,6 +50,18 @@ namespace TicTacToe.HubService
         #endregion
 
         #region Game 
+        public async Task BroadcastWinner(string winnerName, string currentPlayerId, string opponentId)
+        {
+            var connectionIds = await GetAllConnectionOfThatUserID(opponentId);
+
+            if (connectionIds?.Count > 0)
+            {
+                foreach (var connectionId in connectionIds)
+                {
+                    await Clients.Client(connectionId).SendAsync("BroadcastWinner", winnerName, currentPlayerId, opponentId);
+                }
+            }
+        }
         public async Task CreateGameBoard(long FromUserId,string FromUserName,long ToUserId )
         {
            //create board Req
@@ -154,6 +166,7 @@ namespace TicTacToe.HubService
                // }
         
         }
+
         #endregion
 
         #endregion
